@@ -57,6 +57,15 @@ public class TextBlockGoogleStyleFormattingCheckTest extends AbstractModuleTestS
     }
 
     @Test
+    public void testTextBlockFormat2() throws Exception {
+        final String[] expected = {
+        };
+
+        verifyWithInlineConfigParser(
+            getPath("InputTextBlockGoogleStyleFormatting2.java"), expected);
+    }
+
+    @Test
     public void testTextBlockIndentation() throws Exception {
         final String[] expected = {
             "13:13: " + getCheckMessage(MSG_INDENTATION_ERROR),

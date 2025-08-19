@@ -106,20 +106,19 @@ public class TextBlockGoogleStyleFormattingCheck extends AbstractCheck {
 
     @Override
     public void visitToken(DetailAST ast) {
-        boolean misAlinged = false;
+        final DetailAST closingQuotes = getClosingQuotes(ast);
+
         if (!areOpeningQuotesOnCorrectPosition(ast)) {
-//            misAlinged = true;
             log(ast, MSG_OPEN_QUOTES_ERROR);
         }
 
-        final DetailAST closingQuotes = getClosingQuotes(ast);
-        if (!areClosingQuotesOnCorrectPosition(closingQuotes)) {
-//            misAlinged = true;
+        if (!areClosingQuotesOnCorrectPosition(getClosingQuotes(ast))) {
             log(closingQuotes, MSG_CLOSE_QUOTES_ERROR);
         }
-//        if (misAlinged || !verticallyAligned(ast, closingQuotes)) {
-//            log(ast, MSG_INDENTATION_ERROR);
-//        }
+
+        if (!isVerticallyAligned(ast, closingQuotes)) {
+            log(ast, MSG_INDENTATION_ERROR);
+        }
     }
 
     /**
@@ -129,13 +128,8 @@ public class TextBlockGoogleStyleFormattingCheck extends AbstractCheck {
      * @param closeQuotes the ast to check.
      * @return true if both quotes have same indentation else false.
      */
-    private boolean verticallyAligned(DetailAST openQuotes, DetailAST closeQuotes) {
-        final String openingline = getLine(openQuotes.getLineNo() - 1);
-        final String closingLine = getLine(closeQuotes.getLineNo() - 1);
-        int tabWidth = getTabWidth();
-
-        return CommonUtil.lengthExpandedTabs(openingline, openQuotes.getColumnNo(), tabWidth)
-            == CommonUtil.lengthExpandedTabs(closingLine, closeQuotes.getColumnNo(), tabWidth);
+    private static boolean isVerticallyAligned(DetailAST openQuotes, DetailAST closeQuotes) {
+        return openQuotes.getColumnNo() == closeQuotes.getColumnNo();
     }
 
     /**
@@ -190,38 +184,51 @@ public class TextBlockGoogleStyleFormattingCheck extends AbstractCheck {
         };
     }
 
-    private static boolean checkPlusExpression(DetailAST ast, DetailAST superParent) {
-        DetailAST ident = superParent.getFirstChild();
-
-//        if (superParent.getParent().getType() == TokenTypes.PLUS) {
-//
-//        }
-
-        return !TokenUtil.areOnSameLine(ast, ident);
+    /** Checks if plus {@code +} is present between two text blocks.
+     *
+     * @param ast  the ast
+     * @param plus plus ast
+     * @return true if it is present
+     */
+    private static boolean plusIsBetweenTwoTextBlocks(DetailAST ast, DetailAST plus) {
+        return plus.getFirstChild().getType() == TokenTypes.TEXT_BLOCK_LITERAL_BEGIN
+                && plus.getFirstChild().getNextSibling().getType()
+                == TokenTypes.TEXT_BLOCK_LITERAL_BEGIN;
     }
 
     /** Checks the Method call expression.
      *
      * @param ast the quotes
-     * @param superParent the superParent
+     * @param methodCall the methodCall
      * @return true
      */
-    private static boolean checkMethodCall(DetailAST ast, DetailAST superParent) {
-        if (superParent.getParent().getType() != TokenTypes.EXPR) {
-            checkPlusExpression(ast, superParent.getParent());
-        }
+    private static boolean checkMethodCall(DetailAST ast, DetailAST methodCall) {
+        DetailAST tmp = methodCall.getFirstChild();
+        boolean result = !TokenUtil.areOnSameLine(ast, tmp);
 
-        DetailAST tmp = superParent.getFirstChild();
-        DetailAST explist = superParent.findFirstToken(TokenTypes.ELIST);
         if (tmp.getType() == TokenTypes.DOT && tmp.getFirstChild() != ast) {
-            tmp = tmp.getLastChild();
-        }
-        else if (explist.getFirstChild().getFirstChild() != ast) {
-            DetailAST comma = ast.getParent().getPreviousSibling();
-            tmp = explist.findFirstToken(TokenTypes.COMMA);
+            result = !TokenUtil.areOnSameLine(ast, tmp);
         }
 
-        return !TokenUtil.areOnSameLine(ast, tmp);
+        else {
+            DetailAST explist = methodCall.findFirstToken(TokenTypes.ELIST);
+
+            if (methodCall.getParent().getType() == TokenTypes.PLUS) {
+                if (plusIsBetweenTwoTextBlocks(ast, methodCall.getFirstChild())) {
+                     // traverse up to MethodCall
+                }
+            }
+            result = !TokenUtil.areOnSameLine(ast, methodCall.getParent());
+
+            else if (explist.getFirstChild().getFirstChild() != ast) {
+                DetailAST comma = ast.getParent().getPreviousSibling();
+                if (comma.getType() != TokenTypes.COMMA) {
+                    comma = explist.findFirstToken(TokenTypes.COMMA);
+                }
+                result = !TokenUtil.areOnSameLine(ast, comma);
+            }
+        }
+        return result;
     }
 
     /** Determines if the closing quotes of a text block expression are on a new line.
