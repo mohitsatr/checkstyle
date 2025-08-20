@@ -161,13 +161,13 @@ public class TextBlockGoogleStyleFormattingCheck extends AbstractCheck {
     }
 
     /**
-     * Determines if the given expression is at the start of a line.
+     * Determines if the Opening quotes of text block are not preceded by any code.
      *
-     * @param ast the ast to check
-     * @return true if it is, false otherwise
+     * @param openingQuotes opening quotes
+     * @return true if the opening quotes are on the new line.
      */
-    private static boolean areOpeningQuotesOnCorrectPosition(DetailAST ast) {
-        DetailAST superParent = ast;
+    private static boolean areOpeningQuotesOnCorrectPosition(DetailAST openingQuotes) {
+        DetailAST superParent = openingQuotes;
         while (!TokenUtil.isOfType(superParent.getType(), TokenTypes.LITERAL_RETURN,
             TokenTypes.ASSIGN, TokenTypes.LITERAL_RETURN, TokenTypes.METHOD_CALL,
             TokenTypes.PLUS)) {
@@ -175,27 +175,26 @@ public class TextBlockGoogleStyleFormattingCheck extends AbstractCheck {
             superParent = superParent.getParent();
 
             if (superParent.getType() == TokenTypes.PLUS
-                    && plusIsBetweenTwoTextBlocks(ast, superParent)) {
+                    && plusIsBetweenTwoTextBlocks(openingQuotes, superParent)) {
                 superParent = superParent.getParent();
             }
         }
 
         boolean result;
         if (superParent.getType() == TokenTypes.METHOD_CALL) {
-            result = checkMethodCall(ast, superParent);
+            result = checkMethodCall(openingQuotes, superParent);
         }
         else {
-            result = !TokenUtil.areOnSameLine(ast, superParent);
+            result = !TokenUtil.areOnSameLine(openingQuotes, superParent);
         }
         return result;
     }
 
-    /** Checks if plus {@code +} is present between two text blocks. we want to ignore
-     *    the first textblock.
+    /**
+     * Determines if {@code +} is present between two text blocks.
      *
-     * @param ast  the ast
-     * @param plus plus ast
-     * @return true if it is present
+     * @param ast opening quotes
+     * @return true if {@code +} is present between two text blocks.
      */
     private static boolean plusIsBetweenTwoTextBlocks(DetailAST ast, DetailAST plus) {
         return plus.getFirstChild() == ast
@@ -235,10 +234,11 @@ public class TextBlockGoogleStyleFormattingCheck extends AbstractCheck {
         return result;
     }
 
-    /** Determines if the closing quotes of a text block expression are on a new line.
+    /**
+     * Determines if the Closing quotes of text block are not preceded by any code.
      *
-     * @param closingQuotes the closing quotes.
-     * @return true
+     * @param closingQuotes closing quotes
+     * @return true if the closing quotes are on the new line.
      */
     private static boolean areClosingQuotesOnCorrectPosition(DetailAST closingQuotes) {
         boolean result = false;
