@@ -169,29 +169,36 @@ public class TextBlockGoogleStyleFormattingCheck extends AbstractCheck {
     private static boolean areOpeningQuotesOnCorrectPosition(DetailAST ast) {
         DetailAST superParent = ast;
         while (!TokenUtil.isOfType(superParent.getType(), TokenTypes.LITERAL_RETURN,
-                TokenTypes.ASSIGN, TokenTypes.LITERAL_RETURN, TokenTypes.METHOD_CALL,
-                TokenTypes.PLUS)) {
+            TokenTypes.ASSIGN, TokenTypes.LITERAL_RETURN, TokenTypes.METHOD_CALL,
+            TokenTypes.PLUS)) {
+
             superParent = superParent.getParent();
+
+            if (superParent.getType() == TokenTypes.PLUS
+                    && plusIsBetweenTwoTextBlocks(ast, superParent)) {
+                superParent = superParent.getParent();
+            }
         }
 
-        return switch (superParent.getType()) {
-            case TokenTypes.PLUS ->
-                checkPlusExpression(ast, superParent);
-            case TokenTypes.METHOD_CALL ->
-                checkMethodCall(ast, superParent);
-            default ->
-                !TokenUtil.areOnSameLine(ast, superParent);
-        };
+        boolean result;
+        if (superParent.getType() == TokenTypes.METHOD_CALL) {
+            result = checkMethodCall(ast, superParent);
+        }
+        else {
+            result = !TokenUtil.areOnSameLine(ast, superParent);
+        }
+        return result;
     }
 
-    /** Checks if plus {@code +} is present between two text blocks.
+    /** Checks if plus {@code +} is present between two text blocks. we want to ignore
+     *    the first textblock.
      *
      * @param ast  the ast
      * @param plus plus ast
      * @return true if it is present
      */
     private static boolean plusIsBetweenTwoTextBlocks(DetailAST ast, DetailAST plus) {
-        return plus.getFirstChild().getType() == TokenTypes.TEXT_BLOCK_LITERAL_BEGIN
+        return plus.getFirstChild() == ast
                 && plus.getFirstChild().getNextSibling().getType()
                 == TokenTypes.TEXT_BLOCK_LITERAL_BEGIN;
     }
@@ -211,21 +218,18 @@ public class TextBlockGoogleStyleFormattingCheck extends AbstractCheck {
         }
 
         else {
-            DetailAST explist = methodCall.findFirstToken(TokenTypes.ELIST);
+            DetailAST expList = methodCall.findFirstToken(TokenTypes.ELIST);
+            DetailAST node = expList.getFirstChild().getFirstChild();
 
             if (methodCall.getParent().getType() == TokenTypes.PLUS) {
-                if (plusIsBetweenTwoTextBlocks(ast, methodCall.getFirstChild())) {
-                     // traverse up to MethodCall
-                }
+                result = !TokenUtil.areOnSameLine(ast, methodCall.getParent());
             }
-            result = !TokenUtil.areOnSameLine(ast, methodCall.getParent());
 
-            else if (explist.getFirstChild().getFirstChild() != ast) {
+            else if (node != ast && ast.getParent().getType() == TokenTypes.EXPR) {
                 DetailAST comma = ast.getParent().getPreviousSibling();
-                if (comma.getType() != TokenTypes.COMMA) {
-                    comma = explist.findFirstToken(TokenTypes.COMMA);
+                if (comma.getType() == TokenTypes.COMMA) {
+                    result = !TokenUtil.areOnSameLine(ast, comma);
                 }
-                result = !TokenUtil.areOnSameLine(ast, comma);
             }
         }
         return result;

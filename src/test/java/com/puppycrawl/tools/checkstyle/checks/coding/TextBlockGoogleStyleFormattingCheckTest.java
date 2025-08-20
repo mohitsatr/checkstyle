@@ -35,21 +35,38 @@ public class TextBlockGoogleStyleFormattingCheckTest extends AbstractModuleTestS
     }
 
     @Test
-    public void testTextBlockFormat() throws Exception {
+    public void testdefaultTextBlockFormat() throws Exception {
         final String[] expected = {
             "15:37: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
             "15:37: " + getCheckMessage(MSG_INDENTATION_ERROR),
-            "27:17: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
-            "27:17: " + getCheckMessage(MSG_INDENTATION_ERROR),
-            "35:16: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
-            "35:16: " + getCheckMessage(MSG_INDENTATION_ERROR),
-            "43:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
-            "44:32: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
-            "49:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
-            "51:42: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
-            "56:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
-            "57:34: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
-            "70:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "28:33: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "28:33: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "42:36: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "42:36: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "49:17: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "49:17: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "57:16: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "57:16: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "65:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "66:32: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "71:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "73:42: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "78:16: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "92:22: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "93:22: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "106:17: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "106:17: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "108:19: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "108:19: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "125:19: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "125:19: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "127:18: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "127:18: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "137:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "138:34: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "151:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "159:15: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "159:15: " + getCheckMessage(MSG_INDENTATION_ERROR),
         };
 
         verifyWithInlineConfigParser(
@@ -57,22 +74,21 @@ public class TextBlockGoogleStyleFormattingCheckTest extends AbstractModuleTestS
     }
 
     @Test
-    public void testTextBlockFormat2() throws Exception {
+    public void testTextBlockFormatNotVerticallyAligned() throws Exception {
         final String[] expected = {
+            "31:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "38:21: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "44:1: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "51:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "59:17: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "78:17: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "109:17: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "112:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "122:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
         };
 
         verifyWithInlineConfigParser(
-            getPath("InputTextBlockGoogleStyleFormatting2.java"), expected);
-    }
-
-    @Test
-    public void testTextBlockIndentation() throws Exception {
-        final String[] expected = {
-            "13:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
-            "24:11: " + getCheckMessage(MSG_INDENTATION_ERROR),
-            "36:9: " + getCheckMessage(MSG_INDENTATION_ERROR),
-        };
-        verifyWithInlineConfigParser(
-            getPath("InputTextBlockGoogleStyleFormattingIndentation.java"), expected);
+            getPath("InputTextBlockGoogleStyleFormattingNotVerticallyAligned.java"),
+                expected);
     }
 }
