@@ -205,14 +205,12 @@ public class TextBlockGoogleStyleFormattingCheck extends AbstractCheck {
      * @return true
      */
     private static boolean checkMethodCall(DetailAST openingQuotes, DetailAST methodCall) {
-        DetailAST tmp = methodCall.getFirstChild();
-        boolean result = !TokenUtil.areOnSameLine(openingQuotes, tmp);
+        DetailAST methodCallChild = methodCall.getFirstChild();
+        boolean result = !TokenUtil.areOnSameLine(openingQuotes,  methodCallChild);
 
-        if (tmp.getType() != TokenTypes.DOT || tmp.getFirstChild() == openingQuotes) {
-            result = !TokenUtil.areOnSameLine(openingQuotes, tmp);
-        }
+        if (methodCallChild.getType() != TokenTypes.DOT
+                || methodCallChild.getFirstChild() == openingQuotes) {
 
-        else {
             DetailAST expressionList = methodCall.findFirstToken(TokenTypes.ELIST);
             DetailAST node = expressionList.getFirstChild().getFirstChild();
 
@@ -220,7 +218,8 @@ public class TextBlockGoogleStyleFormattingCheck extends AbstractCheck {
                 result = !TokenUtil.areOnSameLine(openingQuotes, methodCall.getParent());
             }
 
-            else if (node != openingQuotes && openingQuotes.getParent().getType() == TokenTypes.EXPR) {
+            else if (node != openingQuotes
+                    && openingQuotes.getParent().getType() == TokenTypes.EXPR) {
                 DetailAST comma = openingQuotes.getParent().getPreviousSibling();
                 if (comma.getType() == TokenTypes.COMMA) {
                     result = !TokenUtil.areOnSameLine(openingQuotes, comma);

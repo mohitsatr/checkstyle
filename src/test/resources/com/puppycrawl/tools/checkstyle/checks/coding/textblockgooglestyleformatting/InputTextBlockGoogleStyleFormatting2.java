@@ -6,7 +6,7 @@ TextBlockGoogleStyleFormatting
 
 package com.puppycrawl.tools.checkstyle.checks.coding.textblockgooglestyleformatting;
 
-public class InputTextBlockGoogleStyleFormatting {
+public class InputTextBlockGoogleStyleFormatting2 {
 
     public static String textFun() {
         // 2 violations 3 lines below:
