@@ -74,6 +74,68 @@ public class TextBlockGoogleStyleFormattingCheckTest extends AbstractModuleTestS
     }
 
     @Test
+    public void testdefaultTextBlockFormat2() throws Exception {
+        final String[] expected = {
+            "15:37: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "15:37: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "16:14: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "21:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "22:32: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "29:33: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "29:33: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "30:38: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "36:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "37:34: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "44:36: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "44:36: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "45:31: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "51:17: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "51:17: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "53:42: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "59:16: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "59:16: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "60:32: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "67:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "68:32: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "73:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "75:42: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "82:16: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "82:16: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "83:41: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "89:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "90:41: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "96:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "97:24: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "106:17: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "106:17: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "108:19: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "108:19: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "109:24: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "110:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "111:26: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "121:19: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "121:19: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "122:24: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "122:29: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "122:29: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "123:26: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "132:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "133:34: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "141:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "142:24: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "147:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "148:27: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "155:15: " + getCheckMessage(MSG_OPEN_QUOTES_ERROR),
+            "155:15: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "156:22: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+            "162:13: " + getCheckMessage(MSG_INDENTATION_ERROR),
+            "163:22: " + getCheckMessage(MSG_CLOSE_QUOTES_ERROR),
+        };
+        verifyWithInlineConfigParser(
+            getPath("InputTextBlockGoogleStyleFormatting2.java"), expected);
+    }
+
+    @Test
     public void testTextBlockFormatNotVerticallyAligned() throws Exception {
         final String[] expected = {
             "31:13: " + getCheckMessage(MSG_INDENTATION_ERROR),

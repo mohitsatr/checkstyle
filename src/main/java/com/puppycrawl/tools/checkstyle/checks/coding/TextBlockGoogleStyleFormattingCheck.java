@@ -106,12 +106,11 @@ public class TextBlockGoogleStyleFormattingCheck extends AbstractCheck {
 
     @Override
     public void visitToken(DetailAST ast) {
-        final DetailAST closingQuotes = getClosingQuotes(ast);
-
         if (!areOpeningQuotesOnCorrectPosition(ast)) {
             log(ast, MSG_OPEN_QUOTES_ERROR);
         }
 
+        final DetailAST closingQuotes = getClosingQuotes(ast);
         if (!areClosingQuotesOnCorrectPosition(getClosingQuotes(ast))) {
             log(closingQuotes, MSG_CLOSE_QUOTES_ERROR);
         }
@@ -167,25 +166,22 @@ public class TextBlockGoogleStyleFormattingCheck extends AbstractCheck {
      * @return true if the opening quotes are on the new line.
      */
     private static boolean areOpeningQuotesOnCorrectPosition(DetailAST openingQuotes) {
-        DetailAST superParent = openingQuotes;
-        while (!TokenUtil.isOfType(superParent.getType(), TokenTypes.LITERAL_RETURN,
+        DetailAST parent = openingQuotes;
+        while (!TokenUtil.isOfType(parent.getType(), TokenTypes.LITERAL_RETURN,
             TokenTypes.ASSIGN, TokenTypes.LITERAL_RETURN, TokenTypes.METHOD_CALL,
             TokenTypes.PLUS)) {
 
-            superParent = superParent.getParent();
+            parent = parent.getParent();
 
-            if (superParent.getType() == TokenTypes.PLUS
-                    && plusIsBetweenTwoTextBlocks(openingQuotes, superParent)) {
-                superParent = superParent.getParent();
+            if (parent.getType() == TokenTypes.PLUS
+                    && plusIsBetweenTwoTextBlocks(openingQuotes, parent)) {
+                parent = parent.getParent();
             }
         }
 
-        boolean result;
-        if (superParent.getType() == TokenTypes.METHOD_CALL) {
-            result = checkMethodCall(openingQuotes, superParent);
-        }
-        else {
-            result = !TokenUtil.areOnSameLine(openingQuotes, superParent);
+        boolean result = !TokenUtil.areOnSameLine(openingQuotes, parent);
+        if (parent.getType() == TokenTypes.METHOD_CALL) {
+            result = checkMethodCall(openingQuotes, parent);
         }
         return result;
     }
@@ -204,30 +200,30 @@ public class TextBlockGoogleStyleFormattingCheck extends AbstractCheck {
 
     /** Checks the Method call expression.
      *
-     * @param ast the quotes
+     * @param openingQuotes the quotes
      * @param methodCall the methodCall
      * @return true
      */
-    private static boolean checkMethodCall(DetailAST ast, DetailAST methodCall) {
+    private static boolean checkMethodCall(DetailAST openingQuotes, DetailAST methodCall) {
         DetailAST tmp = methodCall.getFirstChild();
-        boolean result = !TokenUtil.areOnSameLine(ast, tmp);
+        boolean result = !TokenUtil.areOnSameLine(openingQuotes, tmp);
 
-        if (tmp.getType() == TokenTypes.DOT && tmp.getFirstChild() != ast) {
-            result = !TokenUtil.areOnSameLine(ast, tmp);
+        if (tmp.getType() != TokenTypes.DOT || tmp.getFirstChild() == openingQuotes) {
+            result = !TokenUtil.areOnSameLine(openingQuotes, tmp);
         }
 
         else {
-            DetailAST expList = methodCall.findFirstToken(TokenTypes.ELIST);
-            DetailAST node = expList.getFirstChild().getFirstChild();
+            DetailAST expressionList = methodCall.findFirstToken(TokenTypes.ELIST);
+            DetailAST node = expressionList.getFirstChild().getFirstChild();
 
             if (methodCall.getParent().getType() == TokenTypes.PLUS) {
-                result = !TokenUtil.areOnSameLine(ast, methodCall.getParent());
+                result = !TokenUtil.areOnSameLine(openingQuotes, methodCall.getParent());
             }
 
-            else if (node != ast && ast.getParent().getType() == TokenTypes.EXPR) {
-                DetailAST comma = ast.getParent().getPreviousSibling();
+            else if (node != openingQuotes && openingQuotes.getParent().getType() == TokenTypes.EXPR) {
+                DetailAST comma = openingQuotes.getParent().getPreviousSibling();
                 if (comma.getType() == TokenTypes.COMMA) {
-                    result = !TokenUtil.areOnSameLine(ast, comma);
+                    result = !TokenUtil.areOnSameLine(openingQuotes, comma);
                 }
             }
         }

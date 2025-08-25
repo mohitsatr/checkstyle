@@ -120,11 +120,12 @@ public class InputTextBlockGoogleStyleFormatting {
             first string
             """ + """
             some String""", """
-            second string"""); // violation 'Closing quotes (""") of text-block must be on the new line'
+            second string""");
             // 3 violations 2 lines above:
             //   'Closing quotes (""") of text-block must be on the new line'
             //   'Opening quotes (""") of text-block must be on the new line'
             //   'Text-block quotes are not vertically aligned.'
+        // violation 5 lines above 'Closing quotes (""") of text-block must be on the new line'
 
         // violation 2 lines below 'Text-block quotes are not vertically aligned'
         return
